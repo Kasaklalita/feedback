@@ -9,13 +9,8 @@ def review(request):
         if form.is_valid():
             print(form.cleaned_data)
             return HttpResponseRedirect("/thank-you")
-        # entered_username = request.POST['username']
-        # if entered_username == "" and len(entered_username) >= 100:
-        #     return render(request, "reviews/review.html", {
-        #         "has_error": True
-        #     })
-
-    form = ReviewForm()
+    else:
+        form = ReviewForm()
 
     return render(request, "reviews/review.html", {
         "form": form

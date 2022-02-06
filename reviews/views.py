@@ -4,7 +4,7 @@ from .forms import ReviewForm
 from .models import Review
 from django.views import View
 from django.views.generic.base import TemplateView
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 # Create your views here.
 
 # View as a class
@@ -56,23 +56,24 @@ class ReviewsListView(ListView):
     model = Review
     context_object_name = 'reviews'
 
-    def get_queryset(self):
+    def get_queryset(self): # вывод некоторых
         base_query = super().get_queryset()
         data = base_query.filter(pk = 1)
         return data
 
-    # def get_context_data(self, **kwargs):
+    # def get_context_data(self, **kwargs): # Вывод всех элементов
     #     context = super().get_context_data(**kwargs)
     #     reviews = Review.objects.all()
     #     context['reviews'] = reviews
     #     return context
 
-class SingleReviewView(TemplateView):
+class SingleReviewView(DetailView):
     template_name = 'reviews/single_review.html'
+    model = Review
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        review_id = kwargs['id']
-        selected_review = Review.objects.get(pk = review_id)
-        context['review'] = selected_review
-        return context
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     review_id = kwargs['id']
+    #     selected_review = Review.objects.get(pk = review_id)
+    #     context['review'] = selected_review
+    #     return context

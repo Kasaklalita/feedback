@@ -5,24 +5,33 @@ from .models import Review
 from django.views import View
 from django.views.generic.base import TemplateView
 from django.views.generic import ListView, DetailView
+from django.views.generic.edit import FormView
 # Create your views here.
 
 # View as a class
-class ReviewView(View):
-    def get(self, request):
-        form = ReviewForm()
-        return render(request, "reviews/review.html", {
-            "form": form
-        })
+class ReviewView(FormView):
+    form_class = ReviewForm
+    template_name = 'reviews/review.html'
+    success_url = '/thank-you'
 
-    def post(self, request):
-        form = ReviewForm(request.POST) # instance = existing_model - updating the database
-        if form.is_valid():
-            form.save() # Saving to the database
-            return HttpResponseRedirect("/thank-you")
-        return render(request, "reviews/review.html", {
-            "form": form
-        })
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+    # def get(self, request):
+    #     form = ReviewForm()
+    #     return render(request, "reviews/review.html", {
+    #         "form": form
+    #     })
+
+    # def post(self, request):
+    #     form = ReviewForm(request.POST) # instance = existing_model - updating the database
+    #     if form.is_valid():
+    #         form.save() # Saving to the database
+    #         return HttpResponseRedirect("/thank-you")
+    #     return render(request, "reviews/review.html", {
+    #         "form": form
+    #     })
 
 # View as a method
 # def review(request):
@@ -56,16 +65,16 @@ class ReviewsListView(ListView):
     model = Review
     context_object_name = 'reviews'
 
-    def get_queryset(self): # вывод некоторых
-        base_query = super().get_queryset()
-        data = base_query.filter(pk = 1)
-        return data
+    # def get_queryset(self): # вывод некоторых
+    #     base_query = super().get_queryset()
+    #     data = base_query.filter(pk = 1)
+    #     return data
 
-    # def get_context_data(self, **kwargs): # Вывод всех элементов
-    #     context = super().get_context_data(**kwargs)
-    #     reviews = Review.objects.all()
-    #     context['reviews'] = reviews
-    #     return context
+    def get_context_data(self, **kwargs): # Вывод всех элементов
+        context = super().get_context_data(**kwargs)
+        reviews = Review.objects.all()
+        context['reviews'] = reviews
+        return context
 
 class SingleReviewView(DetailView):
     template_name = 'reviews/single_review.html'
